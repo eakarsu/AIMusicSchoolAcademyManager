@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaTimes, FaEdit, FaTrash, FaExclamationTriangle } from 'react-icons/fa';
 
-export default function DetailModal({ item, columns, formFields, onClose, onSave, onDelete, title }) {
+export default function DetailModal({ item, columns, formFields, onClose, onSave, onDelete, title, extraFooterActions }) {
   const [mode, setMode] = useState('view'); // view, edit, confirmDelete
   const [formData, setFormData] = useState({ ...item });
 
@@ -162,6 +162,7 @@ export default function DetailModal({ item, columns, formFields, onClose, onSave
           <button className="btn btn-danger" onClick={() => setMode('confirmDelete')}>
             <FaTrash /> Delete
           </button>
+          {extraFooterActions && extraFooterActions(item)}
           <button className="btn btn-primary" onClick={() => setMode('edit')}>
             <FaEdit /> Edit
           </button>

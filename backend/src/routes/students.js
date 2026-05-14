@@ -4,8 +4,13 @@ const { pool } = require('../db');
 
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM students ORDER BY id');
-    res.json(result.rows);
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(200, parseInt(req.query.limit) || 50);
+    const offset = (page - 1) * limit;
+    const countResult = await pool.query('SELECT COUNT(*) FROM students');
+    const total = parseInt(countResult.rows[0].count);
+    const result = await pool.query('SELECT * FROM students ORDER BY id LIMIT $1 OFFSET $2', [limit, offset]);
+    res.json({ data: result.rows, page, limit, total, totalPages: Math.ceil(total / limit) });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -20,6 +25,8 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { first_name, last_name, email, phone, date_of_birth, enrollment_date, level, instrument, parent_name, parent_email, parent_phone, address, notes, status, family_id, photo_url } = req.body;
+    if (!first_name || !first_name.trim()) return res.status(400).json({ error: 'First name is required' });
+    if (!last_name || !last_name.trim()) return res.status(400).json({ error: 'Last name is required' });
     const result = await pool.query(
       `INSERT INTO students (first_name, last_name, email, phone, date_of_birth, enrollment_date, level, instrument, parent_name, parent_email, parent_phone, address, notes, status, family_id, photo_url)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING *`,

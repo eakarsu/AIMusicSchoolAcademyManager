@@ -6,7 +6,7 @@ import {
   FaBook, FaHome, FaEnvelope, FaRedo, FaSun, FaDrum, FaTrophy,
   FaChalkboardTeacher, FaWallet, FaExchangeAlt, FaPlayCircle, FaClock,
   FaFileAlt, FaCertificate, FaShoppingBag, FaRobot, FaBrain, FaLightbulb,
-  FaBullhorn, FaBars, FaSignOutAlt, FaTimes
+  FaBullhorn, FaBars, FaSignOutAlt, FaTimes, FaExclamationTriangle
 } from 'react-icons/fa';
 
 const groups = [
@@ -80,6 +80,13 @@ const groups = [
       { to: '/ai/skill-assessment', icon: <FaLightbulb />, label: 'Skill Assessment' },
       { to: '/ai/lesson-plan', icon: <FaClipboardList />, label: 'Lesson Plan' },
       { to: '/ai/marketing-campaign', icon: <FaBullhorn />, label: 'Marketing' },
+      { to: '/ai/schedule-makeup', icon: <FaRedo />, label: 'Schedule Makeup' },
+      { to: '/ai/student-matching', icon: <FaUsers />, label: 'Student Matching' },
+      { to: '/ai/retention-risk', icon: <FaExclamationTriangle />, label: 'Retention Risk' },
+      { to: '/ai/event-promotion', icon: <FaBullhorn />, label: 'Event Promotion' },
+      { to: '/ai/ensemble-assignment', icon: <FaDrum />, label: 'Ensemble Assignment' },
+      { to: '/ai/practice-evaluation', icon: <FaLightbulb />, label: 'Practice Evaluation' },
+      { to: '/ai/parent-summary', icon: <FaEnvelope />, label: 'Parent Digest' },
     ]
   },
 ];

@@ -4,13 +4,19 @@ const { pool } = require('../db');
 
 router.get('/', async (req, res) => {
   try {
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(200, parseInt(req.query.limit) || 50);
+    const offset = (page - 1) * limit;
+    const countResult = await pool.query('SELECT COUNT(*) FROM billing');
+    const total = parseInt(countResult.rows[0].count);
     const result = await pool.query(`
       SELECT b.*, s.first_name AS student_first_name, s.last_name AS student_last_name
       FROM billing b
       LEFT JOIN students s ON b.student_id = s.id
       ORDER BY b.id
-    `);
-    res.json(result.rows);
+      LIMIT $1 OFFSET $2
+    `, [limit, offset]);
+    res.json({ data: result.rows, page, limit, total, totalPages: Math.ceil(total / limit) });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -30,6 +36,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { student_id, amount, description, due_date, paid_date, payment_method, status, invoice_number, notes } = req.body;
+    if (!amount) return res.status(400).json({ error: 'Amount is required' });
     const result = await pool.query(
       `INSERT INTO billing (student_id, amount, description, due_date, paid_date, payment_method, status, invoice_number, notes)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,

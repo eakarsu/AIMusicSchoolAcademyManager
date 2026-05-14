@@ -35,6 +35,13 @@ import AIRecitalProgram from './pages/AIRecitalProgram';
 import AISkillAssessment from './pages/AISkillAssessment';
 import AILessonPlan from './pages/AILessonPlan';
 import AIMarketingCampaign from './pages/AIMarketingCampaign';
+import AIScheduleMakeup from './pages/AIScheduleMakeup';
+import AIStudentMatching from './pages/AIStudentMatching';
+import AIRetentionRisk from './pages/AIRetentionRisk';
+import AIEventPromotion from './pages/AIEventPromotion';
+import AIEnsembleAssignment from './pages/AIEnsembleAssignment';
+import AIPracticeEvaluation from './pages/AIPracticeEvaluation';
+import AIParentSummary from './pages/AIParentSummary';
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('token');
@@ -81,6 +88,13 @@ function AppLayout({ sidebarOpen, setSidebarOpen }) {
           <Route path="/ai/skill-assessment" element={<AISkillAssessment />} />
           <Route path="/ai/lesson-plan" element={<AILessonPlan />} />
           <Route path="/ai/marketing-campaign" element={<AIMarketingCampaign />} />
+          <Route path="/ai/schedule-makeup" element={<AIScheduleMakeup />} />
+          <Route path="/ai/student-matching" element={<AIStudentMatching />} />
+          <Route path="/ai/retention-risk" element={<AIRetentionRisk />} />
+          <Route path="/ai/event-promotion" element={<AIEventPromotion />} />
+          <Route path="/ai/ensemble-assignment" element={<AIEnsembleAssignment />} />
+          <Route path="/ai/practice-evaluation" element={<AIPracticeEvaluation />} />
+          <Route path="/ai/parent-summary" element={<AIParentSummary />} />
         </Routes>
       </main>
     </div>

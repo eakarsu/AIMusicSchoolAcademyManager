@@ -24,7 +24,7 @@ export default function AIRecitalProgram() {
     setError('');
     setResult(null);
     try {
-      const res = await api.post('/ai/recital-program', { recital_id: Number(recitalId) });
+      const res = await api.post('/ai/recital-program', { recitalId: Number(recitalId) });
       setResult(res.data);
       setTimestamp(new Date().toISOString());
     } catch (err) {
