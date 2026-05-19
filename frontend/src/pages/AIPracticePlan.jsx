@@ -3,6 +3,45 @@ import { FaRobot } from 'react-icons/fa';
 import api from '../api';
 import AIOutput from '../components/AIOutput';
 
+function WeeklyCalendar({ weekPlan }) {
+  if (!weekPlan || !Array.isArray(weekPlan)) return null;
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+  return (
+    <div style={{ marginBottom: 24 }}>
+      <h3 style={{ marginBottom: 12, fontSize: 16 }}>Weekly Practice Calendar</h3>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
+        {weekPlan.map((day, i) => (
+          <div key={i} style={{
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 10,
+            padding: 14,
+            borderTop: '3px solid var(--primary, #6366f1)'
+          }}>
+            <div style={{ fontWeight: 700, marginBottom: 8, color: '#a5b4fc', fontSize: 14 }}>
+              {day.day || days[i] || `Day ${i + 1}`}
+            </div>
+            {day.exercises && day.exercises.map((ex, j) => (
+              <div key={j} style={{ marginBottom: 8, paddingBottom: 8, borderBottom: j < day.exercises.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#e2e8f0' }}>{ex.piece || ex.exercise || `Exercise ${j + 1}`}</div>
+                {ex.duration_minutes && <div style={{ fontSize: 11, color: '#94a3b8' }}>{ex.duration_minutes} min</div>}
+                {ex.focus_area && <div style={{ fontSize: 11, color: '#64748b' }}>{ex.focus_area}</div>}
+                {ex.technique_notes && <div style={{ fontSize: 11, color: '#64748b', fontStyle: 'italic' }}>{ex.technique_notes}</div>}
+              </div>
+            ))}
+            {day.total_minutes && (
+              <div style={{ marginTop: 4, fontSize: 12, color: '#6366f1', fontWeight: 600 }}>
+                Total: {day.total_minutes} min
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function AIPracticePlan() {
   const [students, setStudents] = useState([]);
   const [studentId, setStudentId] = useState('');
@@ -24,7 +63,7 @@ export default function AIPracticePlan() {
     setError('');
     setResult(null);
     try {
-      const res = await api.post('/ai/practice-plan', { student_id: Number(studentId) });
+      const res = await api.post('/ai/practice-plan', { studentId: Number(studentId) });
       setResult(res.data);
       setTimestamp(new Date().toISOString());
     } catch (err) {
@@ -83,12 +122,28 @@ export default function AIPracticePlan() {
                 <div className="detail-label">Level</div>
                 <div className="detail-value">{selectedStudent.level || '-'}</div>
               </div>
-              <div className="detail-field">
-                <div className="detail-label">Status</div>
-                <div className="detail-value">{selectedStudent.status || '-'}</div>
-              </div>
             </div>
           </div>
+
+          {result.structured?.week_plan && (
+            <div className="ai-output-card" style={{ marginBottom: 16 }}>
+              <WeeklyCalendar weekPlan={result.structured.week_plan} />
+              {result.structured.goals?.length > 0 && (
+                <div style={{ marginTop: 16 }}>
+                  <h4 style={{ marginBottom: 8, fontSize: 14, color: '#a5b4fc' }}>Goals</h4>
+                  <ul style={{ paddingLeft: 20, color: '#e2e8f0', fontSize: 13 }}>
+                    {result.structured.goals.map((g, i) => <li key={i}>{g}</li>)}
+                  </ul>
+                </div>
+              )}
+              {result.structured.parent_notes && (
+                <div style={{ marginTop: 12, padding: 12, background: 'rgba(99,102,241,0.08)', borderRadius: 8, fontSize: 13, color: '#94a3b8' }}>
+                  <strong style={{ color: '#a5b4fc' }}>Parent Notes:</strong> {result.structured.parent_notes}
+                </div>
+              )}
+            </div>
+          )}
+
           <AIOutput content={result} timestamp={timestamp} onRegenerate={generate} />
         </>
       )}

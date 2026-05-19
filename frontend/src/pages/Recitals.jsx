@@ -21,6 +21,44 @@ const formFields = [
   { key: 'notes', label: 'Notes', type: 'textarea' },
 ];
 
+function exportRecitalPDF(recitalId) {
+  const token = localStorage.getItem('token');
+  fetch(`/api/recitals/${recitalId}/export-pdf`, {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(res => {
+    if (!res.ok) throw new Error('Export failed');
+    return res.blob();
+  }).then(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `recital-${recitalId}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }).catch(err => alert('PDF export failed: ' + err.message));
+}
+
+function recitalDetailExtraActions(item) {
+  if (!item || !item.id) return null;
+  return (
+    <button
+      className="btn btn-secondary"
+      onClick={() => exportRecitalPDF(item.id)}
+      title="Export PDF"
+    >
+      Export PDF
+    </button>
+  );
+}
+
 export default function Recitals() {
-  return <FeaturePage title="Recitals" apiEndpoint="/recitals" columns={columns} formFields={formFields} />;
+  return (
+    <FeaturePage
+      title="Recitals"
+      apiEndpoint="/recitals"
+      columns={columns}
+      formFields={formFields}
+      detailExtraActions={recitalDetailExtraActions}
+    />
+  );
 }

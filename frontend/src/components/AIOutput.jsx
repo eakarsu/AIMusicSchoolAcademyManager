@@ -25,6 +25,7 @@ export default function AIOutput({ content, timestamp, onRegenerate }) {
       if (content.assessment) return content.assessment;
       if (content.lesson_plan) return content.lesson_plan;
       if (content.campaign) return content.campaign;
+      if (content.suggestion) return content.suggestion;
       if (content.result) return content.result;
       if (content.data) {
         if (typeof content.data === 'string') return content.data;

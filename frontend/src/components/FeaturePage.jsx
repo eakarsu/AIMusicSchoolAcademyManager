@@ -3,7 +3,7 @@ import api from '../api';
 import DetailModal from './DetailModal';
 import { FaPlus, FaSync, FaSearch, FaTimes, FaInbox } from 'react-icons/fa';
 
-export default function FeaturePage({ title, apiEndpoint, columns, formFields }) {
+export default function FeaturePage({ title, apiEndpoint, columns, formFields, extraActions, detailExtraActions }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -11,12 +11,20 @@ export default function FeaturePage({ title, apiEndpoint, columns, formFields })
   const [showCreate, setShowCreate] = useState(false);
   const [createData, setCreateData] = useState({});
   const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, totalPages: 1 });
+  const LIMIT = 50;
 
-  const fetchItems = async () => {
+  const fetchItems = async (p = page) => {
     setLoading(true);
     try {
-      const res = await api.get(apiEndpoint);
-      setItems(Array.isArray(res.data) ? res.data : (res.data.data || res.data.items || []));
+      const res = await api.get(`${apiEndpoint}?page=${p}&limit=${LIMIT}`);
+      if (res.data && res.data.data) {
+        setItems(res.data.data);
+        setPagination({ total: res.data.total, totalPages: res.data.totalPages });
+      } else {
+        setItems(Array.isArray(res.data) ? res.data : (res.data.items || []));
+      }
     } catch (err) {
       console.error('Fetch error:', err);
       setItems([]);
@@ -24,7 +32,7 @@ export default function FeaturePage({ title, apiEndpoint, columns, formFields })
     setLoading(false);
   };
 
-  useEffect(() => { fetchItems(); }, [apiEndpoint]);
+  useEffect(() => { fetchItems(1); setPage(1); }, [apiEndpoint]);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return items;
@@ -101,7 +109,7 @@ export default function FeaturePage({ title, apiEndpoint, columns, formFields })
   return (
     <div className="feature-page">
       <div className="feature-header">
-        <h1>{title}</h1>
+        <h1>{title} {pagination.total > 0 && <span style={{ fontSize: 14, color: '#94a3b8', fontWeight: 400 }}>({pagination.total})</span>}</h1>
         <div className="feature-actions">
           <div className="search-bar">
             <FaSearch className="search-icon" />
@@ -112,9 +120,10 @@ export default function FeaturePage({ title, apiEndpoint, columns, formFields })
               onChange={e => setSearch(e.target.value)}
             />
           </div>
-          <button className="btn btn-secondary" onClick={fetchItems} title="Refresh">
+          <button className="btn btn-secondary" onClick={() => fetchItems(page)} title="Refresh">
             <FaSync />
           </button>
+          {extraActions}
           <button className="btn btn-primary" onClick={() => { setCreateData({}); setShowCreate(true); setError(''); }}>
             <FaPlus /> Add New
           </button>
@@ -161,6 +170,22 @@ export default function FeaturePage({ title, apiEndpoint, columns, formFields })
         </div>
       )}
 
+      {pagination.totalPages > 1 && !search && (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12, marginTop: 16, padding: '8px 0' }}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => { const p = page - 1; setPage(p); fetchItems(p); }}
+            disabled={page <= 1}
+          >← Prev</button>
+          <span style={{ color: '#94a3b8', fontSize: 14 }}>Page {page} of {pagination.totalPages}</span>
+          <button
+            className="btn btn-secondary"
+            onClick={() => { const p = page + 1; setPage(p); fetchItems(p); }}
+            disabled={page >= pagination.totalPages}
+          >Next →</button>
+        </div>
+      )}
+
       {selectedItem && (
         <DetailModal
           item={selectedItem}
@@ -170,6 +195,7 @@ export default function FeaturePage({ title, apiEndpoint, columns, formFields })
           onSave={handleSave}
           onDelete={handleDelete}
           title={title}
+          extraFooterActions={detailExtraActions}
         />
       )}
 

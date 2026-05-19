@@ -3,14 +3,18 @@ require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const { initDB } = require('./db');
+const authMiddleware = require('./middleware/auth');
 
 const app = express();
 const PORT = process.env.BACKEND_PORT || 4001;
+const CLIENT_URL = process.env.CLIENT_URL || `http://localhost:${process.env.FRONTEND_PORT || 3001}`;
 
-// Middleware
+// Security
+app.use(helmet());
 app.use(cors({
-  origin: [`http://localhost:${process.env.FRONTEND_PORT || 3001}`, 'http://localhost:3001'],
+  origin: [CLIENT_URL, 'http://localhost:3001', 'http://localhost:3000'],
   credentials: true
 }));
 app.use(express.json({ limit: '50mb' }));
@@ -46,8 +50,11 @@ const certificateRoutes = require('./routes/certificates');
 const merchandiseRoutes = require('./routes/merchandise');
 const aiRoutes = require('./routes/ai');
 
-// Use routes
+// Auth routes (public)
 app.use('/api/auth', authRoutes);
+
+// Apply auth middleware to all other /api routes
+app.use('/api', authMiddleware);
 app.use('/api/students', studentRoutes);
 app.use('/api/teachers', teacherRoutes);
 app.use('/api/instruments', instrumentRoutes);
@@ -96,3 +103,31 @@ async function start() {
 }
 
 start();
+
+// === BATCH 05 AUTO-MOUNT (custom feature suggestions) ===
+app.use('/api/lesson-curator-agent', require('./routes/lesson-curator-agent'));
+app.use('/api/vision-practice-eval', require('./routes/vision-practice-eval'));
+app.use('/api/engagement-agent', require('./routes/engagement-agent'));
+app.use('/api/ensemble-autonomous', require('./routes/ensemble-autonomous'));
+app.use('/api/digital-recital-platform', require('./routes/digital-recital-platform'));
+
+// === Batch 05 Gaps & Frontend Mounts ===
+try { const _gap_student_matching = require('./routes/gap-student-matching'); app.use('/api/gap-student-matching', _gap_student_matching); } catch(e) { console.error('gap mount fail student-matching:', e.message); }
+try { const _gap_retention_risk = require('./routes/gap-retention-risk'); app.use('/api/gap-retention-risk', _gap_retention_risk); } catch(e) { console.error('gap mount fail retention-risk:', e.message); }
+try { const _gap_ensemble_assignment = require('./routes/gap-ensemble-assignment'); app.use('/api/gap-ensemble-assignment', _gap_ensemble_assignment); } catch(e) { console.error('gap mount fail ensemble-assignment:', e.message); }
+try { const _gap_event_promotion = require('./routes/gap-event-promotion'); app.use('/api/gap-event-promotion', _gap_event_promotion); } catch(e) { console.error('gap mount fail event-promotion:', e.message); }
+try { const _gap_parent = require('./routes/gap-parent'); app.use('/api/gap-parent', _gap_parent); } catch(e) { console.error('gap mount fail parent:', e.message); }
+try { const _gap_student = require('./routes/gap-student'); app.use('/api/gap-student', _gap_student); } catch(e) { console.error('gap mount fail student:', e.message); }
+try { const _gap_video = require('./routes/gap-video'); app.use('/api/gap-video', _gap_video); } catch(e) { console.error('gap mount fail video:', e.message); }
+try { const _gap_native = require('./routes/gap-native'); app.use('/api/gap-native', _gap_native); } catch(e) { console.error('gap mount fail native:', e.message); }
+try { const _gap_copyright_managed = require('./routes/gap-copyright-managed'); app.use('/api/gap-copyright-managed', _gap_copyright_managed); } catch(e) { console.error('gap mount fail copyright-managed:', e.message); }
+try { const _gap_live = require('./routes/gap-live'); app.use('/api/gap-live', _gap_live); } catch(e) { console.error('gap mount fail live:', e.message); }
+try { const _gap_webhooks = require('./routes/gap-webhooks'); app.use('/api/gap-webhooks', _gap_webhooks); } catch(e) { console.error('gap mount fail webhooks:', e.message); }
+// === End Batch 05 Mounts ===
+
+// === Custom Views (Academy Views) ===
+try {
+  const customViewsRoutes = require('./routes/customViews');
+  app.use('/api/custom-views', customViewsRoutes);
+  console.log('Custom Views mounted at /api/custom-views');
+} catch (e) { console.error('custom-views mount fail:', e.message); }
