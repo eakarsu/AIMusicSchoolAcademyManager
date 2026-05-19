@@ -72,6 +72,12 @@ const groups = [
     ]
   },
   {
+    title: 'Academy Views',
+    links: [
+      { to: '/custom-views', icon: <FaLightbulb />, label: 'Academy Views' },
+    ]
+  },
+  {
     title: 'AI Tools',
     links: [
       { to: '/ai/practice-plan', icon: <FaRobot />, label: 'Practice Plan' },

@@ -124,3 +124,10 @@ try { const _gap_copyright_managed = require('./routes/gap-copyright-managed'); 
 try { const _gap_live = require('./routes/gap-live'); app.use('/api/gap-live', _gap_live); } catch(e) { console.error('gap mount fail live:', e.message); }
 try { const _gap_webhooks = require('./routes/gap-webhooks'); app.use('/api/gap-webhooks', _gap_webhooks); } catch(e) { console.error('gap mount fail webhooks:', e.message); }
 // === End Batch 05 Mounts ===
+
+// === Custom Views (Academy Views) ===
+try {
+  const customViewsRoutes = require('./routes/customViews');
+  app.use('/api/custom-views', customViewsRoutes);
+  console.log('Custom Views mounted at /api/custom-views');
+} catch (e) { console.error('custom-views mount fail:', e.message); }

@@ -42,6 +42,7 @@ import AIEventPromotion from './pages/AIEventPromotion';
 import AIEnsembleAssignment from './pages/AIEnsembleAssignment';
 import AIPracticeEvaluation from './pages/AIPracticeEvaluation';
 import AIParentSummary from './pages/AIParentSummary';
+import CustomViewsPage from './pages/CustomViewsPage';
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('token');
@@ -95,6 +96,7 @@ function AppLayout({ sidebarOpen, setSidebarOpen }) {
           <Route path="/ai/ensemble-assignment" element={<AIEnsembleAssignment />} />
           <Route path="/ai/practice-evaluation" element={<AIPracticeEvaluation />} />
           <Route path="/ai/parent-summary" element={<AIParentSummary />} />
+          <Route path="/custom-views" element={<CustomViewsPage />} />
         </Routes>
       </main>
     </div>
