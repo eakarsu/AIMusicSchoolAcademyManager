@@ -18,9 +18,9 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3001,
+    port: Number(process.env.FRONTEND_PORT) || 3001,
     proxy: {
-      '/api': 'http://localhost:4001'
+      '/api': `http://localhost:${process.env.BACKEND_PORT || 4001}`
     }
   }
 });
