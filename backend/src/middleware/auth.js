@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 function authMiddleware(req, res, next) {
+  if(!process.env.JWT_SECRET||process.env.JWT_SECRET.length<32)return res.status(500).json({error:'Authentication is not configured'});
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(401).json({ error: 'No token provided' });

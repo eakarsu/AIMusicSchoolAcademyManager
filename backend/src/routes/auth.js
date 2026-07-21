@@ -28,11 +28,12 @@ router.post('/login', async (req, res) => {
 // POST /register
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, name, role } = req.body;
+    const { email, password, name } = req.body;
+    if(!password||password.length<12)return res.status(400).json({error:'Password must be at least 12 characters'});
     const hashed = await bcrypt.hash(password, 10);
     const result = await pool.query(
       'INSERT INTO users (email, password, name, role) VALUES ($1, $2, $3, $4) RETURNING id, email, name, role',
-      [email, hashed, name, role || 'admin']
+      [email, hashed, name, 'student']
     );
     const user = result.rows[0];
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role, name: user.name }, process.env.JWT_SECRET, { expiresIn: '24h' });

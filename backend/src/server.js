@@ -6,6 +6,11 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { initDB } = require('./db');
 const authMiddleware = require('./middleware/auth');
+const {validateRuntime}=require('./governance/runtime');
+const {createProviderGate}=require('./governance/providerGate');
+const governanceRouter=require('./governance/router');
+
+validateRuntime();
 
 const app = express();
 const PORT = process.env.BACKEND_PORT || 4001;
@@ -13,12 +18,11 @@ const CLIENT_URL = process.env.CLIENT_URL || `http://localhost:${process.env.FRO
 
 // Security
 app.use(helmet());
-app.use(cors({
-  origin: [CLIENT_URL, 'http://localhost:3001', 'http://localhost:3000'],
-  credentials: true
-}));
+const allowedOrigins=String(process.env.CORS_ORIGINS||CLIENT_URL).split(',').map(v=>v.trim()).filter(Boolean);
+app.use(cors({origin:(origin,cb)=>!origin||allowedOrigins.includes(origin)?cb(null,true):cb(new Error('Origin not allowed by CORS')),credentials:true}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(createProviderGate(['/api/ai','/api/gap','/api/lesson-curator-agent','/api/vision-practice-eval','/api/engagement-agent','/api/ensemble-autonomous','/api/digital-recital-platform']));
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -82,6 +86,7 @@ app.use('/api/report-cards', reportCardRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/merchandise', merchandiseRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/governed-media-releases',governanceRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -91,7 +96,7 @@ app.get('/api/health', (req, res) => {
 // Initialize database and start server
 async function start() {
   try {
-    await initDB();
+    if(process.env.ENABLE_LEGACY_SCHEMA_BOOTSTRAP==='true') await initDB();
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
       console.log(`API available at http://localhost:${PORT}/api`);
