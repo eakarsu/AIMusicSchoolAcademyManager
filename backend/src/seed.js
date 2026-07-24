@@ -4,6 +4,12 @@ require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const bcrypt = require('bcryptjs');
 const { pool, initDB } = require('./db');
 
+function requireDemoPassword() {
+  const password = process.env.DEMO_PASSWORD || process.env.SEED_DEMO_PASSWORD || process.env.DEMO_SEED_PASSWORD || '';
+  if (password.length < 12 || password.length > 1024) throw new Error('DEMO_PASSWORD must contain 12-1024 characters');
+  return password;
+}
+
 async function seed() {
   const client = await pool.connect();
   try {
@@ -47,7 +53,7 @@ async function seed() {
 
     // 1. Users
     console.log('Seeding users...');
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    const hashedPassword = await bcrypt.hash(requireDemoPassword(), 10);
     await client.query(
       `INSERT INTO users (email, password, name, role) VALUES ($1, $2, $3, $4)`,
       ['admin@musicschool.com', hashedPassword, 'Admin User', 'admin']
