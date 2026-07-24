@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
+set -a
+source "$PROJECT_DIR/.env"
+set +a
 BACKEND_PORT="${BACKEND_PORT:-4001}"
 FRONTEND_PORT="${FRONTEND_PORT:-3001}"
 CHILD_PIDS=()
@@ -16,7 +19,7 @@ port_free "$BACKEND_PORT"
 port_free "$FRONTEND_PORT"
 (cd "$PROJECT_DIR/backend" && BACKEND_PORT="$BACKEND_PORT" PORT="$BACKEND_PORT" node src/server.js) &
 CHILD_PIDS+=("$!")
-(cd "$PROJECT_DIR/frontend" && npm run dev -- --port "$FRONTEND_PORT") &
+(cd "$PROJECT_DIR/frontend" && BACKEND_URL="http://127.0.0.1:$BACKEND_PORT" npm run dev -- --host 127.0.0.1 --port "$FRONTEND_PORT" --strictPort) &
 CHILD_PIDS+=("$!")
 echo "Services started without installing, seeding, migrating, creating databases, or reclaiming ports."
 wait "${CHILD_PIDS[@]}"

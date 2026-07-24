@@ -22,7 +22,7 @@ const allowedOrigins=String(process.env.CORS_ORIGINS||CLIENT_URL).split(',').map
 app.use(cors({origin:(origin,cb)=>!origin||allowedOrigins.includes(origin)?cb(null,true):cb(new Error('Origin not allowed by CORS')),credentials:true}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use(createProviderGate(['/api/ai','/api/gap','/api/lesson-curator-agent','/api/vision-practice-eval','/api/engagement-agent','/api/ensemble-autonomous','/api/digital-recital-platform']));
+app.use(createProviderGate(['/api/gap','/api/lesson-curator-agent','/api/vision-practice-eval','/api/engagement-agent','/api/ensemble-autonomous','/api/digital-recital-platform']));
 
 // Import routes
 const authRoutes = require('./routes/auth');
