@@ -27,9 +27,6 @@ export default function Login() {
   const handleDemo = () => {
     setEmail(import.meta.env.VITE_DEMO_EMAIL || '');
     setPassword(import.meta.env.VITE_DEMO_PASSWORD || '');
-    setTimeout(() => {
-      document.getElementById('login-form').requestSubmit();
-    }, 100);
   };
 
   return (
@@ -64,10 +61,10 @@ export default function Login() {
           </div>
           <div className="login-buttons">
             <button type="submit" className="btn btn-primary btn-full btn-lg" disabled={loading}>
-              {loading ? 'Logging in...' : 'LOGIN'}
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
             <button type="button" className="btn btn-gold btn-full" onClick={handleDemo}>
-              Demo Login
+              Auto Fill Demo Credentials
             </button>
           </div>
         </form>
