@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState, useEffect } from 'react';
 import { FaClipboardList } from 'react-icons/fa';
 import api from '../api';
@@ -43,14 +44,14 @@ export default function AILessonPlan() {
   };
 
   return (
-    <div className="ai-page">
+    <NativeAIControls busy={loading} context="MusicSchoolAcademyManager"><div className="ai-page">
       <h1><FaClipboardList /> Lesson Plan Suggestions</h1>
 
       <div className="ai-form-card">
         <div className="form-row">
           <div className="form-group">
             <label>Select Student</label>
-            <select className="form-select" value={studentId} onChange={e => setStudentId(e.target.value)}>
+            <select data-ai-field={"studentId"} className="form-select" value={studentId} onChange={e => setStudentId(e.target.value)}>
               <option value="">Choose a student...</option>
               {students.map(s => (
                 <option key={s.id} value={s.id}>
@@ -61,7 +62,7 @@ export default function AILessonPlan() {
           </div>
           <div className="form-group">
             <label>Select Teacher (Optional)</label>
-            <select className="form-select" value={teacherId} onChange={e => setTeacherId(e.target.value)}>
+            <select data-ai-field={"teacherId"} className="form-select" value={teacherId} onChange={e => setTeacherId(e.target.value)}>
               <option value="">Any teacher...</option>
               {teachers.map(t => (
                 <option key={t.id} value={t.id}>
@@ -88,6 +89,6 @@ export default function AILessonPlan() {
       {result && (
         <AIOutput content={result} timestamp={timestamp} onRegenerate={generate} />
       )}
-    </div>
+    </div></NativeAIControls>
   );
 }

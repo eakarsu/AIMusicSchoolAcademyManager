@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState, useEffect } from 'react';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import api from '../api';
@@ -35,14 +36,14 @@ export default function AIRetentionRisk() {
   };
 
   return (
-    <div className="ai-page">
+    <NativeAIControls busy={loading} context="MusicSchoolAcademyManager"><div className="ai-page">
       <h1><FaExclamationTriangle /> Retention Risk Analysis</h1>
 
       <div className="ai-form-card">
         <div className="form-row">
           <div className="form-group">
             <label>Specific Student (Optional)</label>
-            <select className="form-select" value={studentId} onChange={e => setStudentId(e.target.value)}>
+            <select data-ai-field={"studentId"} className="form-select" value={studentId} onChange={e => setStudentId(e.target.value)}>
               <option value="">All students (cohort analysis)</option>
               {students.map(s => (
                 <option key={s.id} value={s.id}>
@@ -69,6 +70,6 @@ export default function AIRetentionRisk() {
       {result && (
         <AIOutput content={result} timestamp={timestamp} onRegenerate={generate} />
       )}
-    </div>
+    </div></NativeAIControls>
   );
 }

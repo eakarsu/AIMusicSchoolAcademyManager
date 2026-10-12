@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState } from 'react';
 import { FaBullhorn } from 'react-icons/fa';
 import api from '../api';
@@ -32,14 +33,14 @@ export default function AIMarketingCampaign() {
   };
 
   return (
-    <div className="ai-page">
+    <NativeAIControls busy={loading} context="MusicSchoolAcademyManager"><div className="ai-page">
       <h1><FaBullhorn /> Marketing Campaign Generator</h1>
 
       <div className="ai-form-card">
         <div className="form-row">
           <div className="form-group">
             <label>Campaign Type</label>
-            <select className="form-select" value={campaignType} onChange={e => setCampaignType(e.target.value)}>
+            <select data-ai-field={"campaignType"} className="form-select" value={campaignType} onChange={e => setCampaignType(e.target.value)}>
               <option value="">Select type...</option>
               <option value="Social Media">Social Media</option>
               <option value="Email Newsletter">Email Newsletter</option>
@@ -50,7 +51,7 @@ export default function AIMarketingCampaign() {
           </div>
           <div className="form-group">
             <label>Target Audience</label>
-            <select className="form-select" value={targetAudience} onChange={e => setTargetAudience(e.target.value)}>
+            <select data-ai-field={"targetAudience"} className="form-select" value={targetAudience} onChange={e => setTargetAudience(e.target.value)}>
               <option value="">Select audience...</option>
               <option value="Young Children (4-7)">Young Children (4-7)</option>
               <option value="Children (8-12)">Children (8-12)</option>
@@ -64,7 +65,7 @@ export default function AIMarketingCampaign() {
         <div style={{ marginTop: 16 }}>
           <div className="form-group" style={{ width: '100%' }}>
             <label>Additional Notes (Optional)</label>
-            <textarea
+            <textarea data-ai-field={"notes"}
               className="form-textarea"
               value={notes}
               onChange={e => setNotes(e.target.value)}
@@ -91,6 +92,6 @@ export default function AIMarketingCampaign() {
       {result && (
         <AIOutput content={result} timestamp={timestamp} onRegenerate={generate} />
       )}
-    </div>
+    </div></NativeAIControls>
   );
 }

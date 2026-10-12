@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState, useEffect } from 'react';
 import { FaMusic } from 'react-icons/fa';
 import api from '../api';
@@ -41,14 +42,14 @@ export default function AIParentSummary() {
   };
 
   return (
-    <div className="ai-page">
+    <NativeAIControls busy={loading} context="MusicSchoolAcademyManager"><div className="ai-page">
       <h1><FaMusic /> Parent Portal Digest</h1>
 
       <div className="ai-form-card">
         <div className="form-row">
           <div className="form-group">
             <label>Student</label>
-            <select className="form-select" value={studentId} onChange={e => setStudentId(e.target.value)}>
+            <select data-ai-field={"studentId"} className="form-select" value={studentId} onChange={e => setStudentId(e.target.value)}>
               <option value="">-- choose --</option>
               {students.map(s => (
                 <option key={s.id} value={s.id}>
@@ -73,6 +74,6 @@ export default function AIParentSummary() {
         </div>
       )}
       {result && <AIOutput content={result} timestamp={timestamp} onRegenerate={generate} />}
-    </div>
+    </div></NativeAIControls>
   );
 }

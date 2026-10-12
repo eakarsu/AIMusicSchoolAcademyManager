@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState, useEffect } from 'react';
 import { FaUsers } from 'react-icons/fa';
 import api from '../api';
@@ -34,14 +35,14 @@ export default function AIStudentMatching() {
   };
 
   return (
-    <div className="ai-page">
+    <NativeAIControls busy={loading} context="MusicSchoolAcademyManager"><div className="ai-page">
       <h1><FaUsers /> Student-Teacher Matching</h1>
 
       <div className="ai-form-card">
         <div className="form-row">
           <div className="form-group">
             <label>Select Student</label>
-            <select className="form-select" value={studentId} onChange={e => setStudentId(e.target.value)}>
+            <select data-ai-field={"studentId"} className="form-select" value={studentId} onChange={e => setStudentId(e.target.value)}>
               <option value="">Choose a student...</option>
               {students.map(s => (
                 <option key={s.id} value={s.id}>
@@ -68,6 +69,6 @@ export default function AIStudentMatching() {
       {result && (
         <AIOutput content={result} timestamp={timestamp} onRegenerate={generate} />
       )}
-    </div>
+    </div></NativeAIControls>
   );
 }

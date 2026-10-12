@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState, useEffect } from 'react';
 import { FaMusic } from 'react-icons/fa';
 import api from '../api';
@@ -47,7 +48,7 @@ export default function AIPracticeEvaluation() {
   };
 
   return (
-    <div className="ai-page">
+    <NativeAIControls busy={loading} context="MusicSchoolAcademyManager"><div className="ai-page">
       <h1><FaMusic /> Practice Evaluation</h1>
       <p style={{ color: '#666', marginTop: -8 }}>
         Self-reported / transcribed practice session feedback. (Vision/audio upload not yet wired.)
@@ -57,7 +58,7 @@ export default function AIPracticeEvaluation() {
         <div className="form-row">
           <div className="form-group">
             <label>Student</label>
-            <select className="form-select" value={studentId} onChange={e => setStudentId(e.target.value)}>
+            <select data-ai-field={"studentId"} className="form-select" value={studentId} onChange={e => setStudentId(e.target.value)}>
               <option value="">-- optional --</option>
               {students.map(s => (
                 <option key={s.id} value={s.id}>
@@ -70,23 +71,25 @@ export default function AIPracticeEvaluation() {
         <div className="form-row">
           <div className="form-group">
             <label>Piece</label>
-            <input className="form-input" value={piece} onChange={e => setPiece(e.target.value)} placeholder="e.g. Bach Minuet in G" />
+            <input data-ai-field={"piece"} className="form-input" value={piece} onChange={e => setPiece(e.target.value)} placeholder="e.g. Bach Minuet in G" />
           </div>
           <div className="form-group">
             <label>Duration (min)</label>
-            <input type="number" className="form-input" value={duration} onChange={e => setDuration(e.target.value)} />
+            <input data-ai-field={"duration"} type="number" className="form-input" value={duration} onChange={e => setDuration(e.target.value)} />
           </div>
         </div>
         <div className="form-row">
           <div className="form-group" style={{ width: '100%' }}>
             <label>Notes</label>
-            <textarea className="form-input" rows={3} value={notes} onChange={e => setNotes(e.target.value)} placeholder="What did you work on? Where did you struggle?" />
+            <textarea data-ai-field={"notes"} className="form-input" rows={3} value={notes} onChange={e => setNotes(e.target.value)} placeholder="What did you work on? Where did you struggle?" />
           </div>
         </div>
         <div className="form-row">
           <div className="form-group" style={{ width: '100%' }}>
             <label>Recording Transcript (optional)</label>
-            <textarea className="form-input" rows={3} value={transcript} onChange={e => setTranscript(e.target.value)} />
+            <textarea data-ai-field={"transcript"}
+              data-ai-example="Illustrative transcript: the student played the opening eight measures at a steady tempo, paused twice before position changes, and noted uneven articulation in the final phrase. This is a fictional practice example for review."
+              className="form-input" rows={3} value={transcript} onChange={e => setTranscript(e.target.value)} />
           </div>
         </div>
         <div className="form-row">
@@ -104,6 +107,6 @@ export default function AIPracticeEvaluation() {
         </div>
       )}
       {result && <AIOutput content={result} timestamp={timestamp} onRegenerate={generate} />}
-    </div>
+    </div></NativeAIControls>
   );
 }

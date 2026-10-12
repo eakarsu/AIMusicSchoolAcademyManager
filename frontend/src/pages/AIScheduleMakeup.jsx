@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState, useEffect } from 'react';
 import { FaRedo } from 'react-icons/fa';
 import api from '../api';
@@ -5,7 +6,7 @@ import AIOutput from '../components/AIOutput';
 
 export default function AIScheduleMakeup() {
   const [students, setStudents] = useState([]);
-  const [lessons, setLessons] = useState([]);
+  const [allLessons, setAllLessons] = useState([]);
   const [studentId, setStudentId] = useState('');
   const [lessonId, setLessonId] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,16 +19,18 @@ export default function AIScheduleMakeup() {
       const data = Array.isArray(res.data) ? res.data : (res.data.data || []);
       setStudents(data);
     }).catch(() => setStudents([]));
+    api.get('/lessons?page=1&limit=100').then(res => {
+      const data = Array.isArray(res.data) ? res.data : (res.data.data || []);
+      setAllLessons(data);
+    }).catch(() => setAllLessons([]));
   }, []);
 
+  const lessons = allLessons.filter(lesson => String(lesson.student_id) === String(studentId));
+
   useEffect(() => {
-    if (!studentId) { setLessons([]); setLessonId(''); return; }
-    api.get(`/lessons?page=1&limit=100`).then(res => {
-      const data = Array.isArray(res.data) ? res.data : (res.data.data || []);
-      setLessons(data.filter(l => String(l.student_id) === String(studentId)));
-      setLessonId('');
-    }).catch(() => setLessons([]));
-  }, [studentId]);
+    if (!studentId) { setLessonId(''); return; }
+    setLessonId(current => lessons.some(lesson => String(lesson.id) === String(current)) ? current : '');
+  }, [studentId, allLessons]);
 
   const generate = async () => {
     if (!studentId || !lessonId) return;
@@ -51,14 +54,14 @@ export default function AIScheduleMakeup() {
   const structured = result?.structured;
 
   return (
-    <div className="ai-page">
+    <NativeAIControls busy={loading} context="MusicSchoolAcademyManager"><div className="ai-page">
       <h1><FaRedo /> Makeup Lesson Scheduler</h1>
 
       <div className="ai-form-card">
         <div className="form-row">
           <div className="form-group">
             <label>Select Student</label>
-            <select className="form-select" value={studentId} onChange={e => setStudentId(e.target.value)}>
+            <select data-ai-field={"studentId"} className="form-select" value={studentId} onChange={e => setStudentId(e.target.value)}>
               <option value="">Choose a student...</option>
               {students.map(s => (
                 <option key={s.id} value={s.id}>
@@ -69,7 +72,7 @@ export default function AIScheduleMakeup() {
           </div>
           <div className="form-group">
             <label>Select Lesson to Make Up</label>
-            <select className="form-select" value={lessonId} onChange={e => setLessonId(e.target.value)} disabled={!studentId}>
+            <select data-ai-field={"lessonId"} className="form-select" value={lessonId} onChange={e => setLessonId(e.target.value)} disabled={!studentId}>
               <option value="">Choose a lesson...</option>
               {lessons.map(l => (
                 <option key={l.id} value={l.id}>
@@ -167,6 +170,6 @@ export default function AIScheduleMakeup() {
           <AIOutput content={result} timestamp={timestamp} onRegenerate={generate} />
         </>
       )}
-    </div>
+    </div></NativeAIControls>
   );
 }

@@ -4,6 +4,10 @@ import { FaMusic } from 'react-icons/fa';
 import api from '../api';
 
 export default function Login() {
+  const demoEmail = import.meta.env.VITE_DEMO_EMAIL || 'admin@musicschool.com';
+  const demoPassword = import.meta.env.VITE_DEMO_PASSWORD || '';
+  const demoAvailable = Boolean(demoEmail && demoPassword);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -25,8 +29,13 @@ export default function Login() {
   };
 
   const handleDemo = () => {
-    setEmail(import.meta.env.VITE_DEMO_EMAIL || '');
-    setPassword(import.meta.env.VITE_DEMO_PASSWORD || '');
+    if (!demoAvailable) {
+      setError('Demo credentials are unavailable in this local environment.');
+      return;
+    }
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    setError('');
   };
 
   return (
@@ -63,8 +72,14 @@ export default function Login() {
             <button type="submit" className="btn btn-primary btn-full btn-lg" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
-            <button type="button" className="btn btn-gold btn-full" onClick={handleDemo}>
-              Auto Fill Demo Credentials
+            <button
+              type="button"
+              className="btn btn-gold btn-full"
+              onClick={handleDemo}
+              disabled={loading || !demoAvailable}
+              title={demoAvailable ? 'Fill the configured local demo account' : 'Configure DEMO_PASSWORD for local demo access'}
+            >
+              Fill Demo Credentials
             </button>
           </div>
         </form>

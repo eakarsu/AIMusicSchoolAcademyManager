@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState, useEffect } from 'react';
 import { FaMusic } from 'react-icons/fa';
 import api from '../api';
@@ -36,14 +37,14 @@ export default function AIRecitalProgram() {
   const selectedRecital = recitals.find(r => String(r.id) === String(recitalId));
 
   return (
-    <div className="ai-page">
+    <NativeAIControls busy={loading} context="MusicSchoolAcademyManager"><div className="ai-page">
       <h1><FaMusic /> Recital Program Creator</h1>
 
       <div className="ai-form-card">
         <div className="form-row">
           <div className="form-group">
             <label>Select Recital</label>
-            <select className="form-select" value={recitalId} onChange={e => setRecitalId(e.target.value)}>
+            <select data-ai-field={"recitalId"} className="form-select" value={recitalId} onChange={e => setRecitalId(e.target.value)}>
               <option value="">Choose a recital...</option>
               {recitals.map(r => (
                 <option key={r.id} value={r.id}>
@@ -92,6 +93,6 @@ export default function AIRecitalProgram() {
           <AIOutput content={result} timestamp={timestamp} onRegenerate={generate} />
         </>
       )}
-    </div>
+    </div></NativeAIControls>
   );
 }

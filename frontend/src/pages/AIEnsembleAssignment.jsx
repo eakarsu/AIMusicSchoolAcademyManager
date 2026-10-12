@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState, useEffect } from 'react';
 import { FaMusic } from 'react-icons/fa';
 import api from '../api';
@@ -47,14 +48,14 @@ export default function AIEnsembleAssignment() {
   };
 
   return (
-    <div className="ai-page">
+    <NativeAIControls busy={loading} context="MusicSchoolAcademyManager"><div className="ai-page">
       <h1><FaMusic /> Ensemble Assignment</h1>
 
       <div className="ai-form-card">
         <div className="form-row">
           <div className="form-group">
             <label>Ensemble (optional)</label>
-            <select className="form-select" value={ensembleId} onChange={e => setEnsembleId(e.target.value)}>
+            <select data-ai-field={"ensembleId"} className="form-select" value={ensembleId} onChange={e => setEnsembleId(e.target.value)}>
               <option value="">All active ensembles</option>
               {ensembles.map(e => (
                 <option key={e.id} value={e.id}>
@@ -67,7 +68,8 @@ export default function AIEnsembleAssignment() {
         <div className="form-row">
           <div className="form-group">
             <label>Candidate Student IDs (optional, comma-separated)</label>
-            <input
+            <input data-ai-field={"candidateIds"}
+              data-ai-options={JSON.stringify(students.map(student => student.id))}
               type="text"
               className="form-input"
               placeholder="e.g. 1,2,3 (leave blank to consider all)"
@@ -96,6 +98,6 @@ export default function AIEnsembleAssignment() {
       {result && (
         <AIOutput content={result} timestamp={timestamp} onRegenerate={generate} />
       )}
-    </div>
+    </div></NativeAIControls>
   );
 }

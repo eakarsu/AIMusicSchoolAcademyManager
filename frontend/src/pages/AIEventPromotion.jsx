@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState } from 'react';
 import { FaBullhorn } from 'react-icons/fa';
 import api from '../api';
@@ -39,20 +40,20 @@ export default function AIEventPromotion() {
   };
 
   return (
-    <div className="ai-page">
+    <NativeAIControls busy={loading} context="MusicSchoolAcademyManager"><div className="ai-page">
       <h1><FaBullhorn /> Event Promotion Plan</h1>
 
       <div className="ai-form-card">
         <div className="form-row">
           <div className="form-group">
             <label>Event Name</label>
-            <input className="form-select" value={form.eventName}
+            <input data-ai-field={"eventName"} className="form-select" value={form.eventName}
               onChange={e => setForm(f => ({ ...f, eventName: e.target.value }))}
               placeholder="e.g., Spring Recital 2026" />
           </div>
           <div className="form-group">
             <label>Event Type</label>
-            <select className="form-select" value={form.eventType}
+            <select data-ai-field={"eventType"} className="form-select" value={form.eventType}
               onChange={e => setForm(f => ({ ...f, eventType: e.target.value }))}>
               <option value="recital">Recital</option>
               <option value="competition">Competition</option>
@@ -65,17 +66,17 @@ export default function AIEventPromotion() {
         <div className="form-row">
           <div className="form-group">
             <label>Audience</label>
-            <input className="form-select" value={form.audience}
+            <input data-ai-field={"audience"} className="form-select" value={form.audience}
               onChange={e => setForm(f => ({ ...f, audience: e.target.value }))} />
           </div>
           <div className="form-group">
             <label>Channels (comma separated)</label>
-            <input className="form-select" value={form.channels}
+            <input data-ai-field={"channels"} className="form-select" value={form.channels}
               onChange={e => setForm(f => ({ ...f, channels: e.target.value }))} />
           </div>
           <div className="form-group">
             <label>Event Date</label>
-            <input type="date" className="form-select" value={form.eventDate}
+            <input data-ai-field={"eventDate"} type="date" className="form-select" value={form.eventDate}
               onChange={e => setForm(f => ({ ...f, eventDate: e.target.value }))} />
           </div>
         </div>
@@ -98,6 +99,6 @@ export default function AIEventPromotion() {
       {result && (
         <AIOutput content={result} timestamp={timestamp} onRegenerate={generate} />
       )}
-    </div>
+    </div></NativeAIControls>
   );
 }
