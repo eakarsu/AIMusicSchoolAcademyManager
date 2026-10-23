@@ -86,6 +86,7 @@ app.use('/api/report-cards', reportCardRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/merchandise', merchandiseRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/fp', require('./routes/fpWave40')({ auth: require('./middleware/auth') }));
 app.use('/api/governed-media-releases',governanceRouter);
 
 // Health check

@@ -7,9 +7,15 @@ router.get('/', async (req, res) => {
     const page = Math.max(1, parseInt(req.query.page) || 1);
     const limit = Math.min(200, parseInt(req.query.limit) || 50);
     const offset = (page - 1) * limit;
-    const countResult = await pool.query('SELECT COUNT(*) FROM students');
+    const q = String(req.query.q || req.query.search || '').trim(); const clauses = []; const params = [];
+    if (q) { params.push(`%${q}%`); clauses.push(`(first_name ILIKE $1 OR last_name ILIKE $1 OR instrument ILIKE $1 OR email ILIKE $1)`); }
+    if (req.query.status) { params.push(req.query.status); clauses.push(`status = $${params.length}`); }
+    if (req.query.level) { params.push(req.query.level); clauses.push(`level = $${params.length}`); }
+    if (req.query.instrument) { params.push(req.query.instrument); clauses.push(`instrument = $${params.length}`); }
+    const where = clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';
+    const countResult = await pool.query(`SELECT COUNT(*) FROM students${where}`, params);
     const total = parseInt(countResult.rows[0].count);
-    const result = await pool.query('SELECT * FROM students ORDER BY id LIMIT $1 OFFSET $2', [limit, offset]);
+    const result = await pool.query(`SELECT * FROM students${where} ORDER BY id LIMIT $${params.length + 1} OFFSET $${params.length + 2}`, [...params, limit, offset]);
     res.json({ data: result.rows, page, limit, total, totalPages: Math.ceil(total / limit) });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
